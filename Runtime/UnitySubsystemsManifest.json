@@ -5,14 +5,14 @@
 
   "displays": [
     {
-      "id": "PicoVR display",
+      "id": "PicoXR Display",
       "disablesLegacyVr" : true,
       "supportedMirrorBlitReservedModes" : ["leftEye","rightEye", "sideBySide","occlusionMesh"]
     }
   ],
   "inputs": [
     {
-      "id": "PicoVR input"
+      "id": "PicoXR Input"
     }
   ]
 }
