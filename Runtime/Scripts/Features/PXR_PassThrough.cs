@@ -63,11 +63,15 @@ namespace Unity.XR.PXR
 
         void Update()
         {
-            //pico neo2 - Confirm Key  
+#if UNITY_INPUT_SYSTEM
+            //new confirm button
+#else
+            //Confirm button  
             if (Input.GetKey(KeyCode.JoystickButton0))
             {
                 DrawTexture();
             }
+#endif
         }
 
         private void DrawTexture()

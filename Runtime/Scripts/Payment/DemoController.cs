@@ -51,6 +51,9 @@ namespace Unity.XR.PXR
 
         void Update()
         {
+#if UNITY_INPUT_SYSTEM
+            //new button
+#else
             if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Escape))
             {
                 if (InputPanel.activeInHierarchy)
@@ -62,6 +65,7 @@ namespace Unity.XR.PXR
                     Application.Quit();
                 }
             }
+#endif
         }
 
         void InitDelegate()

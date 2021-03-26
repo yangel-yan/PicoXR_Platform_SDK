@@ -33,35 +33,14 @@ namespace Unity.XR.PXR
             Multiview = 1
         }
 
-        public enum RenderTextureDepthType
-        {
-            BD0 = 0,
-            BD16 = 16,
-            BD24 = 24
-        }
-
-        public enum RenderTextureAntiAliasing
-        {
-            X1 = 1,
-            X2 = 2,
-            X4 = 4,
-            X8 = 8,
-        }
-
         [SerializeField, Tooltip("Set the Stereo Rendering Method")]
         public StereoRenderingModeAndroid stereoRenderingModeAndroid;
 
         [SerializeField, Tooltip("Set whether use the default render texture")]
         public bool useDefaultRenderTexture = true;
 
-        [SerializeField, Tooltip("Set render texture antiAliasing type")]
-        public RenderTextureAntiAliasing antiAliasing = RenderTextureAntiAliasing.X1;
-
         [SerializeField, Tooltip("Set the Resolution of eyes")]
         public Vector2 eyeRenderTextureResolution = new Vector2(2048, 2048);
-
-        [SerializeField, Tooltip("Set the depth type of render texture")]
-        public RenderTextureDepthType renderTextureDepth = RenderTextureDepthType.BD24;
 
         public ushort GetStereoRenderingMode()
         {

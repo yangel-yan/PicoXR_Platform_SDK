@@ -58,7 +58,8 @@ namespace Unity.XR.PXR
         public static void RefreshTips()
         {
 #if !UNITY_EDITOR
-            toolTips.LoadTextFromJson();
+            if(toolTips != null)
+                toolTips.LoadTextFromJson();
 #endif
         }
     }

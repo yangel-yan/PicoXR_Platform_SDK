@@ -18,21 +18,15 @@ namespace Unity.XR.PXR.Editor
         private const string StereoRenderingModeAndroid = "stereoRenderingModeAndroid";
         private const string UseDefaultRenderTexture = "useDefaultRenderTexture";
         private const string EyeRenderTextureResolution = "eyeRenderTextureResolution";
-        private const string AntiAliasing = "antiAliasing";
-        private const string RenderTextureDepth = "renderTextureDepth";
 
         static GUIContent guiStereoRenderingMode = EditorGUIUtility.TrTextContent("Stereo Rendering Mode");
         static GUIContent guiUseDefaultRenderTexture = EditorGUIUtility.TrTextContent("Use Default Render Texture");
         static GUIContent guiEyeRenderTextureResolution = EditorGUIUtility.TrTextContent("Render Texture Resolution");
-        static GUIContent guiAntiAliasing = EditorGUIUtility.TrTextContent("Render Texture Anti-Aliasing");
-        static GUIContent guiRenderTextureDepth = EditorGUIUtility.TrTextContent("Render Texture Bit Depth");
 
 
         private SerializedProperty stereoRenderingModeAndroid;
         private SerializedProperty useDefaultRenderTexture;
         private SerializedProperty eyeRenderTextureResolution;
-        private SerializedProperty antiAliasing;
-        private SerializedProperty renderTextureDetph;
 
         void OnEnable()
         {
@@ -42,26 +36,6 @@ namespace Unity.XR.PXR.Editor
                 useDefaultRenderTexture = serializedObject.FindProperty(UseDefaultRenderTexture);
             if (eyeRenderTextureResolution == null) 
                 eyeRenderTextureResolution = serializedObject.FindProperty(EyeRenderTextureResolution);
-            if (antiAliasing == null) 
-                antiAliasing = serializedObject.FindProperty(AntiAliasing);
-            if (renderTextureDetph == null) 
-                renderTextureDetph = serializedObject.FindProperty(RenderTextureDepth);
-
-            switch (QualitySettings.antiAliasing)
-            {
-                case 0:
-                    ((PXR_Settings)target).antiAliasing = PXR_Settings.RenderTextureAntiAliasing.X1;
-                    break;
-                case 2:
-                    ((PXR_Settings)target).antiAliasing = PXR_Settings.RenderTextureAntiAliasing.X2;
-                    break;
-                case 4:
-                    ((PXR_Settings)target).antiAliasing = PXR_Settings.RenderTextureAntiAliasing.X4;
-                    break;
-                case 8:
-                    ((PXR_Settings)target).antiAliasing = PXR_Settings.RenderTextureAntiAliasing.X8;
-                    break;
-            }
         }
 
         public override void OnInspectorGUI()
@@ -88,24 +62,6 @@ namespace Unity.XR.PXR.Editor
                 if (!((PXR_Settings)target).useDefaultRenderTexture)
                 {
                     EditorGUILayout.PropertyField(eyeRenderTextureResolution, guiEyeRenderTextureResolution);
-                }
-                EditorGUILayout.PropertyField(antiAliasing, guiAntiAliasing);
-                EditorGUILayout.PropertyField(renderTextureDetph, guiRenderTextureDepth);
-
-                switch (((PXR_Settings)target).antiAliasing)
-                {
-                    case PXR_Settings.RenderTextureAntiAliasing.X1:
-                        QualitySettings.antiAliasing = 0;
-                        break;
-                    case PXR_Settings.RenderTextureAntiAliasing.X2:
-                        QualitySettings.antiAliasing = 2;
-                        break;
-                    case PXR_Settings.RenderTextureAntiAliasing.X4:
-                        QualitySettings.antiAliasing = 4;
-                        break;
-                    case PXR_Settings.RenderTextureAntiAliasing.X8:
-                        QualitySettings.antiAliasing = 8;
-                        break;
                 }
             }
             EditorGUI.EndDisabledGroup();

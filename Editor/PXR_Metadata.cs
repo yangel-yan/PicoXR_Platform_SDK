@@ -48,7 +48,6 @@ namespace Unity.XR.PXR.Editor
                 settings.stereoRenderingModeAndroid = PXR_Settings.StereoRenderingModeAndroid.MultiPass;
                 settings.useDefaultRenderTexture = true;
                 settings.eyeRenderTextureResolution = new Vector2(2048, 2048);
-                settings.renderTextureDepth = PXR_Settings.RenderTextureDepthType.BD24;
 
                 return true;
             }

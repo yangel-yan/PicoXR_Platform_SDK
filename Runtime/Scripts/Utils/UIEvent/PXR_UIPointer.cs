@@ -82,7 +82,11 @@ namespace Unity.XR.PXR
 
         public virtual bool IsSelectionButtonPressed()
         {
-            return Input.GetMouseButton(0) || Input.GetKey(KeyCode.JoystickButton0) || TouchBtnValue || AppBtnValue || TriggerBtnValue;
+#if UNITY_INPUT_SYSTEM
+            return TouchBtnValue || AppBtnValue || TriggerBtnValue;
+#else
+            return Input.GetKey(KeyCode.JoystickButton0) || TouchBtnValue || AppBtnValue || TriggerBtnValue;
+#endif
         }
 
         public virtual Vector3 GetOriginPosition()

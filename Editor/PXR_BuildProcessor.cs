@@ -91,7 +91,7 @@ namespace Unity.XR.PXR.Editor
 
             if (xmlNode != null)
             {
-                ((XmlElement)xmlNode).SetAttribute(name, androidURI, value);
+                ((XmlElement)xmlNode).SetAttribute(name,androidURI, value);
             }
         }
 
@@ -191,12 +191,16 @@ namespace Unity.XR.PXR.Editor
             manifestDoc.Load(manifestPath);
             var sdkVersion = (int)PlayerSettings.Android.minSdkVersion;
             var nodePath = "/manifest/application";
+			UpdateOrCreateAttributeInTag(manifestDoc, "/manifest","application", "requestLegacyExternalStorage","true");
             UpdateOrCreateNameValueElementsInTag(manifestDoc, nodePath, "meta-data", "name", "pvr.app.type", "value", "vr");
-            UpdateOrCreateNameValueElementsInTag(manifestDoc, nodePath, "meta-data", "name", "pvr.sdk.version", "value", "XR Platform_1.1.1.10");
+            UpdateOrCreateNameValueElementsInTag(manifestDoc, nodePath, "meta-data", "name", "pvr.sdk.version", "value", "XR Platform_1.1.1.8");
             UpdateOrCreateNameValueElementsInTag(manifestDoc, nodePath, "meta-data", "name", "enable_cpt", "value", PXR_ProjectSetting.GetProjectConfig().useContentProtect ? "1" : "0");
             UpdateOrCreateNameValueElementsInTag(manifestDoc, nodePath, "meta-data", "name", "enable_entitlementcheck", "value", PXR_PlatformSetting.Instance.startTimeEntitlementCheck ? "1" : "0");
             CreateNameValueElementsInTag(manifestDoc, "/manifest", "uses-permission","name", "android.permission.WRITE_SETTINGS");
-            nodePath = "/manifest";
+			CreateNameValueElementsInTag(manifestDoc, "/manifest", "uses-permission","name", "android.permission.READ_EXTERNAL_STORAGE");
+			CreateNameValueElementsInTag(manifestDoc, "/manifest", "uses-permission","name", "android.permission.WRITE_EXTERNAL_STORAGE");			
+
+			nodePath = "/manifest";
             manifestDoc.Save(manifestPath);
         }
 

@@ -12,7 +12,13 @@ using UnityEngine.Rendering;
 using UnityEngine.XR.Management;
 using UnityEngine.XR;
 using AOT;
-using Unity.XR.PXR;
+
+#if UNITY_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.XR;
+using Unity.XR.PXR.Input;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -21,6 +27,25 @@ using UnityEditor;
 
 namespace Unity.XR.PXR
 {
+#if UNITY_INPUT_SYSTEM
+#if UNITY_EDITOR
+    [InitializeOnLoad]
+#endif
+    static class InputLayoutLoader
+    {
+        static InputLayoutLoader()
+        {
+            RegisterInputLayouts();
+        }
+
+        public static void RegisterInputLayouts()
+        {
+            InputSystem.RegisterLayout<PXR_HMD>(matches: new InputDeviceMatcher().WithInterface(XRUtilities.InterfaceMatchAnyVersion).WithProduct("^(Pico Neo)|^(Pico G)"));
+            InputSystem.RegisterLayout<PXR_Controller>(matches: new InputDeviceMatcher().WithInterface(XRUtilities.InterfaceMatchAnyVersion).WithProduct(@"^(PicoXR Controller)"));
+        }
+    }
+#endif
+
     public class PXR_Loader : XRLoaderHelper
 #if UNITY_EDITOR
     , IXRLoaderPreInit
@@ -58,6 +83,9 @@ namespace Unity.XR.PXR
 
         public override bool Initialize()
         {
+#if UNITY_INPUT_SYSTEM
+            InputLayoutLoader.RegisterInputLayouts();
+#endif
             PXR_Settings settings = GetSettings();
             if (settings != null)
             {
@@ -67,8 +95,6 @@ namespace Unity.XR.PXR
                     colorSpace = (ushort) ((QualitySettings.activeColorSpace == ColorSpace.Linear) ? 1 : 0),
                     useDefaultRenderTexture = settings.useDefaultRenderTexture,
                     eyeRenderTextureResolution = settings.eyeRenderTextureResolution,
-                    antiAliasing = (ushort) settings.antiAliasing,
-                    renderTextureDepth = (ushort) settings.renderTextureDepth
                 };
 
                 try
@@ -158,6 +184,15 @@ namespace Unity.XR.PXR
         public string GetPreInitLibraryName(BuildTarget buildTarget, BuildTargetGroup buildTargetGroup)
         {
             return "UnityPicoVR";
+        }
+#endif
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        static void RuntimeLoadPicoPlugin()
+        {
+            PXR_Plugin.System.UPxr_LoadPicoPlugin();
+            Debug.LogError("PicoVR RuntimeLoadPicoPlugin");
         }
 #endif
     }

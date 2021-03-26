@@ -31,10 +31,7 @@ namespace Unity.XR.PXR
             }
         }
 
-        private bool isFrameRateLimitForBoundary;
         private int lastBoundaryState = 0;
-        private int recordTargetFrameRate;
-        private int limitTargetFrameRate = 30;
 
         private float[] fixedData = new float[7] { 0, 0, 0, 1, 0, 0, 0 };
         private Camera eyeCamera;
@@ -192,10 +189,6 @@ namespace Unity.XR.PXR
 
         void Start()
         {
-            // record
-            isFrameRateLimitForBoundary = PXR_Plugin.Boundary.UPxr_GetFrameRateLimit();
-            recordTargetFrameRate = Application.targetFrameRate;
-
 #if !UNITY_EDITOR
             var loader = XRGeneralSettings.Instance.Manager.activeLoader as PXR_Loader;
             var w = 2048;
@@ -252,33 +245,6 @@ namespace Unity.XR.PXR
             PXR_Plugin.Boundary.UPxr_SetReinPosition(fixedData[0], fixedData[1], fixedData[2], fixedData[3], fixedData[4], fixedData[5], fixedData[6], 0, PXR_Input.IsControllerConnected(PXR_Input.Controller.LeftController), 0);
             fixedData = PXR_Plugin.Controller.UPxr_GetControllerFixedSensorState(1);
             PXR_Plugin.Boundary.UPxr_SetReinPosition(fixedData[0], fixedData[1], fixedData[2], fixedData[3], fixedData[4], fixedData[5], fixedData[6], 1, PXR_Input.IsControllerConnected(PXR_Input.Controller.RightController), 0);
-
-            // boundary limit FPS
-            if (isFrameRateLimitForBoundary)
-            {
-                int currentBoundaryState = PXR_Plugin.Boundary.UPxr_GetSeeThroughState();
-
-                if (currentBoundaryState != lastBoundaryState)
-                {
-                    if (currentBoundaryState == 2 || currentBoundaryState == 1) // limit framerate
-                    {
-                        if (Application.targetFrameRate != limitTargetFrameRate)
-                        {
-                            // record
-                            recordTargetFrameRate = Application.targetFrameRate;
-                            // limit FPS
-                            Application.targetFrameRate = limitTargetFrameRate;
-                        }
-
-                    }
-                    else // recover
-                    {
-                        Application.targetFrameRate = recordTargetFrameRate;
-                    }
-
-                    lastBoundaryState = currentBoundaryState;
-                }
-            }
 
             // boundary
             if (eyeCamera != null && eyeCamera.enabled)

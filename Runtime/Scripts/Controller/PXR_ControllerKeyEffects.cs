@@ -29,12 +29,10 @@ namespace Unity.XR.PXR
         private XRNode node;
 
         private bool lPrimary2DButton, rPrimary2DButton, lMenuButton, rMenuButton, lGripButton, rGripButton, lTriggerButton, rTriggerButton,x,y,a,b;
-        private bool isHaveEmission = false;
 
         void Start()
         {
             controllerRenderMat = GetComponent<Renderer>();
-            isHaveEmission = PXR_Input.GetActiveController() == PXR_Input.ControllerDevice.Neo3;
             switch (hand)
             {
                 case PXR_Input.Controller.LeftController:
@@ -88,46 +86,32 @@ namespace Unity.XR.PXR
                         if (lPrimary2DButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureTouchpad);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureTouchpad);
                         }
                         else if (lMenuButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureApp);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureApp);
                         }
                         else if (lTriggerButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureTrigger);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureTrigger);
                         }
                         else if (x)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureX);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureX);
                         }
                         else if (y)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureY);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureY);
                         }
                         else if (lGripButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureGrip);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureGrip);
                         }
                         else
                         {
                             if (controllerRenderMat.material.GetTexture("_MainTex") != textureIdle)
                             {
                                 controllerRenderMat.material.SetTexture("_MainTex", textureIdle);
-                                if (isHaveEmission)
-                                    controllerRenderMat.material.SetTexture("_EmissionMap", textureIdle);
                             }
                         }
                     }
@@ -137,46 +121,32 @@ namespace Unity.XR.PXR
                         if (rPrimary2DButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureTouchpad);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureTouchpad);
                         }
                         else if (rMenuButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureApp);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureApp);
                         }
                         else if (rTriggerButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureTrigger);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureTrigger);
                         }
                         else if (a)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureA);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureA);
                         }
                         else if (b)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureB);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureB);
                         }
                         else if (rGripButton)
                         {
                             controllerRenderMat.material.SetTexture("_MainTex", textureGrip);
-                            if (isHaveEmission)
-                                controllerRenderMat.material.SetTexture("_EmissionMap", textureGrip);
                         }
                         else
                         {
                             if (controllerRenderMat.material.GetTexture("_MainTex") != textureIdle)
                             {
                                 controllerRenderMat.material.SetTexture("_MainTex", textureIdle);
-                                if (isHaveEmission)
-                                    controllerRenderMat.material.SetTexture("_EmissionMap", textureIdle);
                             }
                         }
                     }

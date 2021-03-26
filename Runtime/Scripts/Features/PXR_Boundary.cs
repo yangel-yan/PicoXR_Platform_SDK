@@ -100,6 +100,15 @@ namespace Unity.XR.PXR
         {
             PXR_Plugin.Boundary.UPxr_EnableSeeThroughManual(value);
         }
+
+        /// <summary>
+        /// Get Boundary Dialog State
+        /// </summary>
+        /// <returns>NothingDialog = -1,GobackDialog = 0,ToofarDialog = 1,LostDialog = 2,LostNoReason = 3,LostCamera = 4,LostHighLight = 5,LostLowLight = 6,LostLowFeatureCount = 7,LostReLocation = 8</returns>
+        public static int GetDialogState()
+        {
+            return PXR_Plugin.Boundary.UPxr_GetDialogState();
+        }
     }
 }
 

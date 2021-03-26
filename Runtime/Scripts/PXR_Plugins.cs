@@ -269,15 +269,13 @@ namespace Unity.XR.PXR
     {
         public ushort stereoRenderingMode;
         public ushort colorSpace;
-        public int antiAliasing;
         public bool useDefaultRenderTexture;
         public Vector2 eyeRenderTextureResolution;
-        public int renderTextureDepth;
     }
 
     public static class PXR_Plugin
     {
-        private const string PxrSDKVersion = "1.1.1.4";
+        private const string PxrSDKVersion = "1.1.1.8";
 
         private static AndroidJavaClass sysClass,homeKeyClass, audioClass, batteryClass, controllerClass0, controllerClass1, controllerClass2, pxrClass0, pxrClass1, pxrClass2, unityPlayer;
         private static AndroidJavaObject activity;
@@ -337,6 +335,10 @@ namespace Unity.XR.PXR
 
         //System
         [DllImport("UnityPicoVR")]
+        public static extern bool LoadPicoPlugin();
+        [DllImport("UnityPicoVR")]
+        public static extern void UnloadPicoPlugin();
+        [DllImport("UnityPicoVR")]
         public static extern void UnityPicoVR_SetUserDefinedSettings(UserDefinedSettings settings);
         [DllImport("UnityPicoVR")]
         public static extern void UnityPicoVR_Construct(PXR_Loader.ConvertRotationWith2VectorDelegate fromToRotation);
@@ -393,6 +395,8 @@ namespace Unity.XR.PXR
         private static extern void Pvr_SetReinPosition(float x, float y, float z, float w, float px, float py, float pz, int hand, bool valid, int key);
         [DllImport("Pvr_UnitySDK", CallingConvention = CallingConvention.Cdecl)]
         private static extern void Pvr_BoundarySetSTBackground(bool value);
+        [DllImport("Pvr_UnitySDK", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int Pvr_GetDialogState();
 
         public static void UPxr_InitAndroidClass()
         {
@@ -571,6 +575,22 @@ namespace Unity.XR.PXR
 
         public static class System
         {
+            public static bool UPxr_LoadPicoPlugin()
+            {
+#if !UNITY_EDITOR && UNITY_ANDROID
+                return LoadPicoPlugin();
+#else  
+                return false;
+#endif
+            }
+
+            public static void UPxr_UnloadPicoPlugin()
+            {
+#if !UNITY_EDITOR && UNITY_ANDROID
+                UnloadPicoPlugin();
+#endif
+            }
+
             public static void UPxr_SetUserDefinedSettings(UserDefinedSettings settings)
             {
 #if !UNITY_EDITOR && UNITY_ANDROID
@@ -1093,6 +1113,92 @@ namespace Unity.XR.PXR
                 tobHelper.Call("pbsSwitchSetUsbConfigurationOption", GetEnumType(uSBConfigModeEnum), 0);
 #endif
             }
+
+            public static void UPxr_ScreenOn()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+                tobHelper.Call("pbsScreenOn");
+#endif
+            }
+
+            public static void UPxr_ScreenOff()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsScreenOff");
+#endif
+            }
+
+            public static void UPxr_AcquireWakeLock()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsAcquireWakeLock");
+#endif
+            }
+
+            public static void UPxr_ReleaseWakeLock()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsReleaseWakeLock");
+#endif
+            }
+
+            public static void UPxr_EnableEnterKey()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsEnableEnterKey");
+#endif
+            }
+
+            public static void UPxr_DisableEnterKey()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsDisableEnterKey");
+#endif
+            }
+
+            public static void UPxr_EnableVolumeKey()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsEnableVolumeKey");
+#endif
+            }
+
+            public static void UPxr_DisableVolumeKey()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsDisableVolumeKey");
+#endif
+            }
+
+            public static void UPxr_EnableBackKey()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsEnableBackKey");
+#endif
+            }
+
+            public static void UPxr_DisableBackKey()
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            tobHelper.Call("pbsDisableBackKey");
+#endif
+            }
+
+            public static void UPxr_WriteConfigFileToDataLocal(string path, string content, Action<bool> callback)
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (callback != null) BoolCallback = callback;
+            tobHelper.Call("pbsWriteConfigFileToDataLocal", path, content, null);
+#endif
+            }
+
+            public static void UPxr_ResetAllKeyToDefault(Action<bool> callback)
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            if (callback != null) BoolCallback = callback;
+            tobHelper.Call("pbsResetAllKeyToDefault", null);
+#endif
+            }
         }
 
         public static class Boundary
@@ -1350,6 +1456,22 @@ namespace Unity.XR.PXR
             public static T UPxr_IntPtrToStruct<T>(IntPtr info)
             {
                 return (T)Marshal.PtrToStructure(info, typeof(T));
+            }
+
+            public static int UPxr_GetDialogState()
+            {
+                var state = 0;
+#if !UNITY_EDITOR && UNITY_ANDROID
+                try
+                {
+                    state = Pvr_GetDialogState();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("UPxr_GetDialogStateError :" + e.ToString());
+                }
+#endif
+                return state;
             }
         }
 

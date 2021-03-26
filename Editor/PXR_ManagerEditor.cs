@@ -28,15 +28,18 @@ namespace Unity.XR.PXR.Editor
             PXR_Manager manager = (PXR_Manager)target;
             PXR_ProjectSetting projectConfig = PXR_ProjectSetting.GetProjectConfig();
 
-            if (!Camera.main.transform.Find("[FPS]"))
+            if (Camera.main != null)
             {
-                fpsObject = Instantiate(Resources.Load<GameObject>("Prefabs/[FPS]"), Camera.main.transform, false);
-                fpsObject.name = "[FPS]";
-                fpsObject.SetActive(false);
-            }
-            else
-            {
-                fpsObject = Camera.main.transform.Find("[FPS]").gameObject;
+                if (!Camera.main.transform.Find("[FPS]"))
+                {
+                    fpsObject = Instantiate(Resources.Load<GameObject>("Prefabs/[FPS]"), Camera.main.transform, false);
+                    fpsObject.name = "[FPS]";
+                    fpsObject.SetActive(false);
+                }
+                else
+                {
+                    fpsObject = Camera.main.transform.Find("[FPS]").gameObject;
+                }
             }
             // Fps and Screen Fade
             manager.showFPS = EditorGUILayout.Toggle("Show FPS", manager.showFPS);
@@ -48,24 +51,26 @@ namespace Unity.XR.PXR.Editor
             }
 
             manager.screenFade = EditorGUILayout.Toggle("Open Screen Fade", manager.screenFade);
-            var head = Camera.main.transform;
-            if (head)
+            if (Camera.main != null)
             {
-                var fade = head.GetComponent<PXR_ScreenFade>();
-                if (manager.screenFade)
+                var head = Camera.main.transform;
+                if (head)
                 {
-                    if (!fade)
+                    var fade = head.GetComponent<PXR_ScreenFade>();
+                    if (manager.screenFade)
                     {
-                        head.gameObject.AddComponent<PXR_ScreenFade>();
-                        Selection.activeObject = head;
+                        if (!fade)
+                        {
+                            head.gameObject.AddComponent<PXR_ScreenFade>();
+                            Selection.activeObject = head;
+                        }
+                    }
+                    else
+                    {
+                        if (fade) DestroyImmediate(fade);
                     }
                 }
-                else
-                {
-                    if (fade) DestroyImmediate(fade);
-                }
             }
-
             //ffr
             manager.foveationLevel = (FoveationLevel)EditorGUILayout.EnumPopup("Foveation Level", manager.foveationLevel);
 

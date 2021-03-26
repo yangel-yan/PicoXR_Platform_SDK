@@ -21,14 +21,14 @@ namespace Unity.XR.PXR
             touchRenderer = GetComponent<MeshRenderer>();
         }
 
-        private void ChangeEffects()
+        private void Update()
         {
             InputDevices.GetDeviceAtXRNode(XRNode.LeftHand).TryGetFeatureValue(CommonUsages.primary2DAxis, out touchPos);
 
             if (touchPos != Vector2.zero)
             {
                 touchRenderer.enabled = true;
-                transform.localPosition = new Vector3(1.3f - touchPos.x * 2.55f, 1.6f, -1.7f - touchPos.y * 2.55f);
+                transform.localPosition = new Vector3(-touchPos.x * 1.28f, 1.6f, -2.98f - touchPos.y * 1.28f);
             }
             else
             {
