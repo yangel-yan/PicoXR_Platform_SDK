@@ -77,6 +77,29 @@ namespace Unity.XR.PXR
             }
             return state;
         }
+
+        /// <summary>
+        /// Get the controller predict rotation data.
+        /// </summary>
+        /// <param name="hand">0,1</param>
+        /// <param name="predictTime">ms</param>
+        public static Quaternion UPvr_GetControllerPredictRotation(Controller controller, float predictTime)
+        {
+            var data = PXR_Plugin.Controller.GetControllerPredictSensorData((int)controller, predictTime);
+            return new Quaternion(data[0], data[1], data[2], data[3]);
+        }
+
+        /// <summary>
+        /// Get the controller predict position data.
+        /// </summary>
+        /// <param name="hand">0,1</param>
+        /// <param name="predictTime">ms</param>
+        public static Vector3 UPvr_GetControllerPredictPosition(Controller controller, float predictTime)
+        {
+            var data = PXR_Plugin.Controller.GetControllerPredictSensorData((int)controller, predictTime);
+            return new Vector3(data[4] / 1000.0f, data[5] / 1000.0f, -data[6] / 1000.0f);
+        }
+
     }
 }
 

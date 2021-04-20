@@ -336,6 +336,7 @@ namespace Unity.XR.PXR
         {
             PXR_Plugin.Sensor.UPxr_OptionalResetSensor(1, 1);
         }
+
     }
 }
 

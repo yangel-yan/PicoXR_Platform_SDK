@@ -12,6 +12,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace Unity.XR.PXR
 {
@@ -275,9 +276,9 @@ namespace Unity.XR.PXR
 
     public static class PXR_Plugin
     {
-        private const string PxrSDKVersion = "1.2.1.0";
+        private const string PxrSDKVersion = "1.2.2.2";
 
-        private static AndroidJavaClass sysClass,homeKeyClass, audioClass, batteryClass, controllerClass0, controllerClass1, controllerClass2, pxrClass0, pxrClass1, pxrClass2, unityPlayer;
+        private static AndroidJavaClass sysClass, homeKeyClass, audioClass, batteryClass, controllerClass0, controllerClass1, controllerClass2, pxrClass0, pxrClass1, pxrClass2, unityPlayer;
         private static AndroidJavaObject activity;
 
         [DllImport("UnityPicoVR")]
@@ -332,6 +333,8 @@ namespace Unity.XR.PXR
         private static extern int Pvr_OptionalResetSensor(int index, int resetRot, int resetPos);
         [DllImport("Pvr_UnitySDK", CallingConvention = CallingConvention.Cdecl)]
         private static extern int Pvr_GetPsensorState();
+        [DllImport("Pvr_UnitySDK", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int Pvr_GetMainSensorState(ref float x, ref float y, ref float z, ref float w, ref float px, ref float py, ref float pz, ref float fov, ref float fov2, ref int viewNumber);
 
         //System
         [DllImport("UnityPicoVR")]
@@ -569,6 +572,15 @@ namespace Unity.XR.PXR
                 }
 #endif
                 return state;
+            }
+
+            public static int UPxr_GetMainSensorState(ref float x, ref float y, ref float z, ref float w, ref float px, ref float py, ref float pz, ref float vfov, ref float hfov, ref int viewNumber)
+            {
+#if !UNITY_EDITOR && UNITY_ANDROID
+                return Pvr_GetMainSensorState(ref x,ref y,ref z,ref w,ref px,ref py,ref pz,ref vfov,ref hfov,ref viewNumber);
+#else
+                return 0;
+#endif
             }
 
         }
@@ -967,7 +979,7 @@ namespace Unity.XR.PXR
                 return true;
             }
 
-            public static bool UPxr_StopHomeKeyReceiver( )
+            public static bool UPxr_StopHomeKeyReceiver()
             {
 #if !UNITY_EDITOR && UNITY_ANDROID
                 UPxr_CallStaticMethod(homeKeyClass, "Pvr_StopReceiver", activity);
@@ -1606,7 +1618,7 @@ namespace Unity.XR.PXR
 #endif
                 return type;
             }
-            
+
             public static int UPxr_GetControllerType()
             {
                 int type = -1;
@@ -1626,6 +1638,32 @@ namespace Unity.XR.PXR
 #endif
                 return data;
             }
+
+            private static float[] predictData = new float[7];
+
+            public static float[] GetControllerPredictSensorData(int controllerID, float predictTime)
+            {
+                Vector3 devicePosition;
+                Quaternion deviceRotation;
+                float[] headData = new float[7] { 0, 0, 0, 0, 0, 0, 0 };
+                InputDevices.GetDeviceAtXRNode(XRNode.Head).TryGetFeatureValue(CommonUsages.devicePosition, out devicePosition);
+                InputDevices.GetDeviceAtXRNode(XRNode.Head).TryGetFeatureValue(CommonUsages.deviceRotation, out deviceRotation);
+
+                headData[0] = devicePosition.x;
+                headData[1] = devicePosition.y;
+                headData[2] = devicePosition.z;
+                headData[3] = deviceRotation.w;
+                headData[4] = deviceRotation.x;
+                headData[5] = deviceRotation.y;
+                headData[6] = deviceRotation.z;
+
+#if ANDROID_DEVICE
+             System.UPxr_CallStaticMethod(controllerClass1, "SetHeadDataAndPreTime",headData, predictTime);
+             System.UPxr_CallStaticMethod(ref predictData, controllerClass1, "getControllerSensorStateWithHeadDataAndPreTime", controllerID);
+#endif
+                return predictData;
+            }
+
         }
 
         public static class PassThrough
